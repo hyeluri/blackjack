@@ -34,7 +34,7 @@ class window.App extends Backbone.Model
         alert "draw!"
       if dealerScore > playerScore
         alert "you lose"
-      else
+      if dealerScore < playerScore
         alert "you win"
 
 
