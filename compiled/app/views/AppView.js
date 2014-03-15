@@ -13,7 +13,7 @@
     }
 
     AppView.prototype.template = _.template('\
-    <button class="hit-button">Hit</button> <button class="stand-button">Stand</button>\
+    <button class="hit-button">Hit</button> <button class="stand-button">Stand</button><button class="split-button">Split</button>\
     <div class="player-hand-container"></div>\
     <div class="dealer-hand-container"></div>\
   ');
@@ -24,6 +24,9 @@
       },
       "click .stand-button": function() {
         return this.model.get('playerHand').stand();
+      },
+      "click .split-button": function() {
+        return this.model.get('playerHand').split();
       }
     };
 

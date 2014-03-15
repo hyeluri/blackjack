@@ -21,35 +21,41 @@
       dealerH = this.get('dealerHand');
       playerH = this.get('playerHand');
       playerH.on('turnOver', function() {
-        var _results;
         if (dealerH.models.length < 3) {
           dealerH.models[0].flip();
-        }
-        _results = [];
-        while ((dealerH.scores()[0] < 21 && dealerH.scores()[1] < 17) || (dealerH.scores()[0] < 17 && dealerH.scores()[1] > 21)) {
-          if (dealerH.scores()[0] < 17) {
-            _results.push(dealerH.hit());
-          } else {
+          if (dealerH.scores() > 16) {
             dealerH.gameOver();
-            console.log(dealerH.scores());
-            break;
           }
         }
-        return _results;
+        while (dealerH.scores() < 17) {
+          dealerH.hit();
+        }
+        if (dealerH.scores() < 21) {
+          if (dealerH.scores() > playerH.scores()) {
+            return alert('dealer wins!');
+          } else if (dealerH.scores() === playerH.scores()) {
+            return alert('draw!');
+          } else {
+            return alert('player wins');
+          }
+        }
       });
-      return dealerH.on('gameSet', function() {
-        var dealerScore, playerScore;
-        dealerScore = dealerH.scores()[0] > dealerH.scores()[1] ? dealerH.scores()[0] : dealerH.scores()[1];
-        playerScore = playerH.scores()[1] > 21 ? playerH.scores()[0] : playerH.scores()[1] === 1 ? playerH.scores()[0] : playerH.scores()[1];
-        console.log("dealer " + dealerScore + " player " + playerScore);
-        if (dealerScore === playerScore) {
-          alert("draw!");
-        }
-        if (dealerScore > playerScore) {
-          return alert("you lose");
-        } else {
-          return alert("you win");
-        }
+      playerH.on('busted', function() {
+        return alert("player busted");
+      });
+      playerH.on('blackJack', function() {
+        return alert("player blackJack!");
+      });
+      dealerH.on('busted', function() {
+        return alert("dealer busted");
+      });
+      dealerH.on('blackJack', function() {
+        console.log('blackJack listened!');
+        return alert("dealer blackJack!");
+      });
+      return setTimeout(function() {
+        playerH.checkBlackJack();
+        return 0;
       });
     };
 

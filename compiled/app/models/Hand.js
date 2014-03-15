@@ -21,14 +21,12 @@
 
     Hand.prototype.hit = function() {
       this.add(this.deck.pop()).last();
-      if (this.scores()[1] === 21 || this.scores()[0] === 21) {
-        alert('blackJack!');
-      }
-      if (this.scores()[1] === 1 && this.scores()[0] > 21) {
-        alert('busted!');
-      }
-      if (this.scores()[0] > 21 && this.scores()[1] > 21) {
-        return alert('busted!');
+      return this.checkBlackJack();
+    };
+
+    Hand.prototype.checkBlackJack = function() {
+      if (this.scores() === 21 || this.scores() > 21) {
+        return this.gameOver();
       }
     };
 
@@ -36,30 +34,40 @@
       return this.trigger('turnOver', this);
     };
 
-    Hand.prototype.bust = function() {
-      var status;
-      console.log("score is " + (this.scores()));
-      status = this.scores()[0] > 18 ? true : false;
-      return console.log(status);
+    Hand.prototype.split = function() {
+      return console.log(this.models);
     };
 
     Hand.prototype.gameOver = function() {
-      return this.trigger('gameSet', this);
+      console.log('game OVer!');
+      if (this.scores() === 21) {
+        console.log('blackJack');
+        console.log(this);
+        this.blackJack();
+      }
+      if (this.scores() > 21) {
+        console.log('busted');
+        return this.busted();
+      }
+    };
+
+    Hand.prototype.busted = function() {
+      return this.trigger('busted', this);
+    };
+
+    Hand.prototype.blackJack = function() {
+      return this.trigger('blackJack', this);
     };
 
     Hand.prototype.scores = function() {
-      var hasAce, score;
+      var finalScore, hasAce, score;
       hasAce = this.reduce(function(memo, card) {
         return memo || card.get('value') === 1;
       }, false);
       score = this.reduce(function(score, card) {
         return score + (card.get('revealed') ? card.get('value') : 0);
       }, 0);
-      if (hasAce) {
-        return [score, score + 10];
-      } else {
-        return [score, 1];
-      }
+      return finalScore = hasAce ? score + 10 < 22 ? score + 10 : score : score;
     };
 
     return Hand;

@@ -3,27 +3,34 @@ class window.Hand extends Backbone.Collection
   model: Card
 
   initialize: (array, @deck, @isDealer) ->
-   
+
   hit: ->
     @add(@deck.pop()).last()
-    if @scores()[1] is 21 or @scores()[0] is 21
-      alert 'blackJack!'
-    if @scores()[1] is 1 and @scores()[0] >21
-      alert 'busted!'
-    if @scores()[0] > 21 and @scores()[1] > 21
-      alert 'busted!'
+    @checkBlackJack()
+
+  checkBlackJack: ->
+    if @scores() is 21 or @scores() > 21
+      @gameOver()
 
   stand: -> @trigger('turnOver', @)
 
-  bust: ->
-    console.log "score is #{@scores()}"
-
-    status = if @scores()[0] > 18 then true else false
-    console.log status
+  split: ->
+    console.log @models
 
   gameOver: ->
-    @trigger('gameSet', @)
+    console.log 'game OVer!'
+    if @scores() is 21
+      console.log 'blackJack'
+      console.log @
+      @blackJack()
+    if @scores() >21
+      console.log 'busted'
+      @busted()
 
+  busted: ->
+    @trigger('busted',@)
+  blackJack: ->
+    @trigger('blackJack',@)
     #finish the turn to the dealer. no more cards
 
   scores: ->
@@ -36,4 +43,17 @@ class window.Hand extends Backbone.Collection
     score = @reduce (score, card) ->
       score + if card.get 'revealed' then card.get 'value' else 0
     , 0
-    if hasAce then [score, score + 10] else [score, 1]
+    # if hasAce then [score, score + 10] else [score, 1]
+    finalScore =
+      if hasAce
+        if score + 10 < 22
+          score + 10
+        else
+          score
+      else
+        score
+
+
+
+
+
